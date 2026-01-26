@@ -1,0 +1,12 @@
+# Node modules
+node_modules
+Backend/node_modules
+Frontend/node_modules
+
+# Environment variables
+.env
+Backend/.env
+Frontend/.env
+
+# Logs
+npm-debug.log
