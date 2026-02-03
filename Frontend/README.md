@@ -1,16 +1,57 @@
-# React + Vite
+## LinkedIn Clone (MERN Stack)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a LinkedIn-inspired full-stack web application built using the MERN stack.  
+The project currently focuses on implementing a secure authentication system and basic user management, forming the foundation for future social networking features.
 
-Currently, two official plugins are available:
+### 🚀 Features Implemented So Far
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User authentication with **JWT (JSON Web Tokens)**
+- Secure **signup, login, and logout** functionality
+- Password hashing using **bcrypt**
+- Authentication handled via **HTTP-only cookies**
+- Protected routes using custom authentication middleware
+- Fetching the currently logged-in user
+- Global user state management using **React Context API**
+- Responsive frontend built with **React, Tailwind CSS, and Vite**
+- Clean separation of frontend and backend concerns
 
-## React Compiler
+### 🛠 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Frontend**
+- React (Vite)
+- Tailwind CSS
+- Axios
+- React Router
+- React Context API
 
-## Expanding the ESLint configuration
+**Backend**
+- Node.js
+- Express.js
+- MongoDB & Mongoose
+- JWT for authentication
+- bcrypt for password hashing
+- Cookie-based session handling
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 🔐 Authentication Flow
+
+1. User signs up or logs in
+2. Backend generates a JWT and stores it in an HTTP-only cookie
+3. Protected routes verify the token using middleware
+4. Logged-in user data is fetched and stored in global context
+5. Logout clears the authentication cookie and frontend state
+
+### 📦 Project Status
+
+⚠️ **Work in Progress**
+
+Planned features include:
+- Profile creation & editing
+- Image uploads (profile & cover photos)
+- Posts, likes, and comments
+- Connections system
+- Job listings
+
+This project is being built step-by-step to closely mimic real-world LinkedIn functionality while following best practices.
+
+---
+
