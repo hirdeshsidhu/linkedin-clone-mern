@@ -1,11 +1,40 @@
 import React from 'react'
+import { useContext } from 'react';
+import { createContext } from 'react'
+import { authDataContext } from './AuthContext';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useState } from 'react';
+export const userDataContext = createContext();
 
-function UserContext() {
-  return (
-    <div>
-      
-    </div>
-  )
+
+function UserContext({ children }) {
+    let [userData,setUserData] = useState(null);
+    let {serverUrl} = useContext(authDataContext);
+    let getCurrentUser = async () => {
+        try {
+            let result = await axios.get(serverUrl + "/api/user/currentuser", { withCredentials: true })
+            setUserData(result.data)
+            console.log(result);
+        } catch (error) {
+            console.log(error);
+            setUserData(null)
+        }
+    }
+    useEffect(() => {
+        getCurrentUser()
+    }, [])
+    let value = {
+        userData,
+        setUserData
+    };
+    return (
+        <div>
+            <userDataContext.Provider value={value}>
+                {children}
+            </userDataContext.Provider>
+        </div>
+    )
 }
 
 export default UserContext

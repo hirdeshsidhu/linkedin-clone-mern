@@ -6,6 +6,7 @@ import { authDataContext } from "../Context/AuthContext";
 import { toast } from "react-toastify";
 
 import axios from "axios";
+import { userDataContext } from "../Context/UserContext";
 function Signup() {
     let [show,setShow] = useState(false);
     let navigate = useNavigate()
@@ -17,6 +18,7 @@ function Signup() {
     let [password,setPassword] = useState("");
     let [loading,setLoading] = useState(false);
     let [err,setErr] = useState("")
+    let {userData,setUserData} = useContext(userDataContext);
 
     const handleSignup = async (e)=>{
         e.preventDefault()
@@ -29,7 +31,7 @@ function Signup() {
                 email,
                 password
             },{withCredentials:true})
-            console.log(result);
+            //console.log(result);
             toast.success("Account created successfully 🎉");
             setLoading(false)
             setFirstName("");
@@ -37,7 +39,9 @@ function Signup() {
             setUserName("");
             setEmail("");
             setPassword("");
-            navigate("/")
+            setUserData(result);
+           navigate("/")
+
         } catch (error) {
             setLoading(false)
             // console.log(error)

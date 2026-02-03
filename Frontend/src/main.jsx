@@ -6,11 +6,13 @@ import { BrowserRouter } from 'react-router-dom'
 import AuthContext from './Context/AuthContext.jsx'
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import UserContext from './Context/UserContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthContext>
+        <UserContext>
         <App />
         <ToastContainer
           position="top-right"
@@ -18,6 +20,7 @@ createRoot(document.getElementById('root')).render(
           pauseOnHover
           draggable
         />
+        </UserContext>
       </AuthContext>
     </BrowserRouter>
   </StrictMode>

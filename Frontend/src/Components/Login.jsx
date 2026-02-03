@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { authDataContext } from '../Context/AuthContext';
 import { toast } from 'react-toastify';
+import { userDataContext } from '../Context/UserContext';
 function Login() {
     let [show, setShow] = useState(false);
     let [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ function Login() {
     let [loading, setLoading] = useState(false);
     let navigate = useNavigate();
     const { serverUrl } = useContext(authDataContext);
+    let { userData, setUserData } = useContext(userDataContext);
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -25,6 +27,7 @@ function Login() {
             setPassword("")
             setLoading(false)
             navigate("/");
+            setUserData(result);
         } catch (error) {
             console.log(error);
             setLoading(false)
