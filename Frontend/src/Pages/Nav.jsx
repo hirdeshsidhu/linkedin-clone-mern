@@ -31,7 +31,7 @@ function Nav() {
         return `flex w-[42px] lg:w-[80px] flex-col  items-center justify-center pb-1 cursor-pointer hover:text-black transition-all duration-200  ${active === name ? "border-b-2 border-b-black text-black " : "border-b-2 border-transparent text-gray-600"}`
     }
     return (
-        <div className='w-full bg-white h-[65px] fixed flex justify-between items-center gap-[3px] px-6 lg:px-40'>
+        <div className='w-full bg-white h-[65px] fixed top-0 flex justify-between items-center gap-[3px] px-6 lg:px-40'>
             <div className='flex  lg:gap-[14px]'>
                 <div className='mr-[20px] lg:mr-0'>
                     <img className='w-[35px]' src={logo1} alt="" />
