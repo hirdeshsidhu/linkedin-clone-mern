@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     headline:{
         type:String,
-        default:""
+        default:"Engineering Student at Chitkara University | Learning Full-Stack Development"
     },
     skills:[ {type:String} ],
     education:[
