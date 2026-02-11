@@ -47,7 +47,7 @@ function Nav() {
                     showMenu && (
                         <div className='w-[300px] h-[300px] top-[65px] flex flex-col items-center justify-center rounded-xl right-[0px] bg-white shadow-lg absolute p-[20px] gap-[20px]'>
                             <div>
-                                <img className='h-[60px] rounded-full overflow-hidden' src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" alt="" />
+                                <img className='h-[60px] rounded-full overflow-hidden' src={userData?.profileImage || null} alt="" />
                             </div>
                             <div>
                                 <h1 className='text-[18px] font-semibold text-gray-700 '>{userData.firstName} {userData.lastName}</h1>
@@ -80,7 +80,7 @@ function Nav() {
                     <div className='text-xs font-medium hidden md:block'>Notifications</div>
                 </div>
                 <div>
-                    <img onClick={() => setShowMenu(!showMenu)} className=' cursor-pointer h-[43px] rounded-full overflow-hidden' src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" alt="" />
+                    <img onClick={() => setShowMenu(!showMenu)} className=' cursor-pointer h-[43px] rounded-full overflow-hidden' src={userData?.profileImage} alt="" />
 
                 </div>
             </div>

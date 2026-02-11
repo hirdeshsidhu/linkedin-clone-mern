@@ -1,11 +1,16 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { RxCross1 } from "react-icons/rx";
 import { userDataContext } from '../Context/UserContext';
 import { FaPlusCircle } from "react-icons/fa";
 import { IoPencil } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
+import defaultPP from "../assets/defaultProfile.jpg"
+import deafultCP from "../assets/defaultcoverimage.png"
+import { authDataContext } from '../Context/AuthContext';
+import axios from "axios";
 function EditProfile() {
     let { userData, setUserData, edit, setEdit } = useContext(userDataContext)
+    let { serverUrl } = useContext(authDataContext)
     let [firstName, setFirstName] = useState(userData?.firstName || "");
     let [lastName, setLastName] = useState(userData?.lastName || "");
     let [userName, setUserName] = useState(userData?.userName || "");
@@ -61,21 +66,73 @@ function EditProfile() {
             education,
             experience
         }
+        handleSaveProfile();
     }
-
+    const profileImage = useRef()
+    const coverImage = useRef()
+    let [fronendProfileImage, setFrontendProfileImage] = useState(userData.profileImage || defaultPP);
+    let [fronendCoverImage, setFrontendCoverImage] = useState(userData.coverImage || deafultCP);
+    let [profileFile, setProfileFile] = useState(null)
+    let [coverFile, setCoverFile] = useState(null)
+    let handleProfileImage = (e) => {
+        let file = e.target.files[0];
+        setProfileFile(file);
+        setFrontendProfileImage(URL.createObjectURL(file))
+    }
+    let handleCoverImage = (e) => {
+        let file = e.target.files[0];
+        setCoverFile(file);
+        setFrontendCoverImage(URL.createObjectURL(file))
+    }
+    const handleSaveProfile = async () => {
+        try {
+            console.log("Saving profile")
+            let formdata = new FormData()
+            formdata.append("firstName", firstName);
+            formdata.append("lastName", lastName);
+            formdata.append("userName", userName)
+            formdata.append("headline", headline)
+            formdata.append("skills", JSON.stringify(skills))
+            formdata.append("education", JSON.stringify(education))
+            formdata.append("location", location)
+            formdata.append("experience", JSON.stringify(experience));
+            formdata.append("gender", gender)
+            if (profileFile) {
+                formdata.append("profileImage", profileFile)
+            }
+            if (coverFile) {
+                formdata.append("coverImage", coverFile)
+            }
+            let result = await axios.put(serverUrl + "/api/user/updateuser", formdata, { withCredentials: true })
+            setUserData(result.data)
+            console.log(result)
+            setEdit(false)
+        } catch (error) {
+            console.log("ERROR OBJECT:", error);
+            console.log("STATUS:", error.response?.status);
+            console.log("DATA:", error.response?.data);
+            console.log("MESSAGE:", error.message);
+        }
+    }
     return (
 
+
         <div className='w-full h-[100vh] fixed top-0 z-[100] flex justify-center items-center '>
+            <input type="file" accept='image/*' hidden ref={profileImage} onChange={handleProfileImage} />
+            <input type="file" accept='image/*' hidden ref={coverImage} onChange={handleCoverImage} />
+
             <div className='w-full h-full bg-black opacity-[0.5] absolute '></div>
             <div className='w-[90%] bg-white max-w-[500px] h-[600px] relative p-[10px] z-[200] overflow-auto rounded-lg shadow-lg'>
                 <div className='absolute top-[20px] right-[20px]'>
                     <RxCross1 className='cursor-pointer text-xl font-bold text-gray-700 hover:text-teal-400 active:scale-80' onClick={() => setEdit(false)} />
                 </div>
-                <div className='relative w-full h-[100px] bg-blue-950 mt-[42px]'>
-                    <IoPencil className='right-[10px] top-[5px] absolute text-white text-xl cursor-pointer hover:text-gray-500' />
+                <div className='relative w-full h-[100px] overflow-hidden bg-blue-950 mt-[42px]'>
+                    <img src={fronendCoverImage} className='w-full' alt="" />
+                    <IoPencil onClick={() => coverImage.current.click()} className='right-[10px] top-[5px] absolute text-white text-xl cursor-pointer hover:text-gray-500' />
                 </div>
                 <div className='bg-red-600 rounded-full w-[80px] h-[80px] overflow-hidden absolute top-[115px] left-[30px]'>
-                    <FaPlusCircle className='absolute top-[35px] right-[0px] text-blue-500 cursor-pointer text-xl' />
+                    <img className='w-full h-full' src={fronendProfileImage} alt="" />
+                    <FaPlusCircle onClick={() => profileImage.current.click()} className='absolute top-[35px] right-[0px] text-blue-500 cursor-pointer text-xl' />
                 </div>
                 <div className='w-full'>
                     <form onSubmit={handleSubmit} className='w-full flex flex-col items-center justify-center gap-[10px] mt-[70px] ' action="">
@@ -146,7 +203,7 @@ function EditProfile() {
                             }
 
                             <input type="text" placeholder='Enter your skill' className='mt-2 w-full px-3 py-2 border-[1px] outline-none focus:ring-1 focus:ring-blue-400 rounded-xl' value={skillsInput} onChange={(e) => setSkillsInput(e.target.value)} />
-                            <button className='px-3 py-1 cursor-pointer rounded-full border-[1px] mt-4 active:scale-95' onClick={addSkill}>Add Skill</button>
+                            <button type='button' className='px-3 py-1 cursor-pointer rounded-full border-[1px] mt-4 active:scale-95' onClick={addSkill}>Add Skill</button>
                         </div>
                         <div className='border-[1px] rounded-xl p-[5px] flex flex-col w-full gap-[10px] border-gray-700'>
                             <h1 className='text-xl font-semibold '>Education</h1>
@@ -159,7 +216,7 @@ function EditProfile() {
                             <input type="text" placeholder='Enter your college' className='mt-2 w-full px-3 py-2 border-[1px] outline-none focus:ring-1 focus:ring-blue-400 rounded-xl' value={eduInput.college} onChange={(e) => setEduInput({ ...eduInput, college: e.target.value })} />
                             <input type="text" placeholder='Enter your degree' className='mt-2 w-full px-3 py-2 border-[1px] outline-none focus:ring-1 focus:ring-blue-400 rounded-xl' value={eduInput.degree} onChange={(e) => setEduInput({ ...eduInput, degree: e.target.value })} />
                             <input type="text" placeholder='Enter field of study' className='mt-2 w-full px-3 py-2 border-[1px] outline-none focus:ring-1 focus:ring-blue-400 rounded-xl' value={eduInput.fieldOfStudy} onChange={(e) => setEduInput({ ...eduInput, fieldOfStudy: e.target.value })} />
-                            <button className='px-3 py-1 cursor-pointer rounded-full border-[1px] mt-4 active:scale-95' onClick={addEducation}>Submit</button>
+                            <button type='button' className='px-3 py-1 cursor-pointer rounded-full border-[1px] mt-4 active:scale-95' onClick={addEducation}>Submit</button>
                         </div>
                         <div className='border-[1px] rounded-xl p-[5px] flex flex-col w-full gap-[10px] border-gray-700'>
                             <h1 className='text-xl font-semibold '>Experience</h1>
@@ -173,9 +230,9 @@ function EditProfile() {
                             <input type="text" placeholder='Job Title' className='mt-2 w-full px-3 py-2 border-[1px] outline-none focus:ring-1 focus:ring-blue-400 rounded-xl' value={expInput.title} onChange={(e) => setExpInput({ ...expInput, title: e.target.value })} />
                             <input type="text" placeholder='Enter your Company' className='mt-2 w-full px-3 py-2 border-[1px] outline-none focus:ring-1 focus:ring-blue-400 rounded-xl' value={expInput.company} onChange={(e) => setExpInput({ ...expInput, company: e.target.value })} />
                             <input type="text" placeholder='Enter description' className='mt-2 w-full px-3 py-2 border-[1px] outline-none focus:ring-1 focus:ring-blue-400 rounded-xl' value={expInput.description} onChange={(e) => setExpInput({ ...expInput, description: e.target.value })} />
-                            <button className='px-3 py-1 cursor-pointer rounded-full border-[1px] mt-4 active:scale-95' onClick={addExp}>Submit</button>
+                            <button type='button' className='px-3 py-1 cursor-pointer rounded-full border-[1px] mt-4 active:scale-95' onClick={addExp}>Submit</button>
                         </div>
-                        <button className='px-5 py-2 rounded-3xl bg-[#004182] text-white cursor-pointer active:scale-95 mt-10 flex items-center justify-center hover:bg-blue-700 transition-all'>Edit Profile</button>
+                        <button type='submit' className='px-5 py-2 rounded-3xl bg-[#004182] text-white cursor-pointer active:scale-95 mt-10 flex items-center justify-center hover:bg-blue-700 transition-all'>Edit Profile</button>
                     </form>
                 </div>
             </div>
