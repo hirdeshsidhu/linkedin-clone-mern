@@ -20,7 +20,7 @@ function Home() {
                         <img src={userData?.coverImage || null} alt="" />
                     </div>
                      <IoPencil className='absolute top-[10px] right-[10px] cursor-pointer hover:text-white' onClick={()=>setEdit(true)} />
-                    <div className='w-[70px] h-[70px] cursor-pointer bg-red-200 rounded-full overflow-hidden absolute top-[25px] left-[20px]'>
+                    <div className='w-[55px] h-[55px] cursor-pointer bg-red-200 rounded-full overflow-hidden absolute top-[35px] left-[20px]'>
                         <img src={userData?.profileImage || null} alt="" />
                     </div>
 
