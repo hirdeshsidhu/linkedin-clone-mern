@@ -5,6 +5,6 @@ import isAuth from "../Middlewares/isAuth.js";
 import upload from "../Middlewares/multer.js";
 const postRouter = express.Router()
 
-postRouter.post("/create",isAuth,upload.single("img"),createPost)
+postRouter.post("/create",isAuth,upload.single("image"),createPost)
 
 export default postRouter

@@ -7,7 +7,7 @@ export const createPost = async (req, res) => {
     let newPost;
     if (req.file) {
       let image = await uploadOnCloudinary(req.file.path);
-      newPost = Post.create({
+      newPost = await Post.create({
         author:req.userId,
         description,
         image,

@@ -39,7 +39,7 @@ function Signup() {
             setUserName("");
             setEmail("");
             setPassword("");
-            setUserData(result);
+            setUserData(result.data);
            navigate("/")
 
         } catch (error) {
