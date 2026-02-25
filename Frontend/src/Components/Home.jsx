@@ -7,9 +7,11 @@ import { RxCross1 } from 'react-icons/rx';
 import { CiImageOn } from "react-icons/ci";
 import axios from 'axios';
 import { authDataContext } from '../Context/AuthContext';
+import Post from './Post';
+
 
 function Home() {
-    let { userData, edit, setEdit } = useContext(userDataContext)
+    let { userData, edit, setEdit,posts } = useContext(userDataContext)
     let { serverUrl } = useContext(authDataContext);
     let [frontendImage, setFrontendImage] = useState("");
     let [backendImage, setBackendImage] = useState("");
@@ -102,10 +104,14 @@ function Home() {
                         <button className='w-[80%] cursor-pointer border-[1px] flex items-start px-5 hover:bg-gray-200 py-2 rounded-full' onClick={() => setUploadPost(true)}>Start a post</button>
                     </div>
 
+                    <div className='mt-5'>
+                        {posts?.map((post)=>(
+                            <Post key={post._id} post={post}/>
+                        ))}
+                    </div>
                 </div>
-                <div>
 
-                </div>
+               
             </div>
 
         </div>
