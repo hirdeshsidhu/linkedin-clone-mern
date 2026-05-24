@@ -6,6 +6,7 @@ import Notification from "../Models/notification.model.js";
 
 // CREATE POST
 export const createPost = async (req, res) => {
+
   try {
 
     let { description } = req.body;
@@ -22,7 +23,9 @@ export const createPost = async (req, res) => {
         image,
       });
 
-    } else {
+    }
+
+    else {
 
       newPost = await Post.create({
         author: req.userId,
@@ -31,20 +34,25 @@ export const createPost = async (req, res) => {
 
     }
 
-    // CREATE NOTIFICATIONS FOR CONNECTIONS
+    // SEND NOTIFICATION TO CONNECTIONS
     const currentUser = await User.findById(req.userId);
 
     for (let connectionId of currentUser.connections) {
 
       await Notification.create({
+
         sender: req.userId,
+
         receiver: connectionId,
-        text: "made a new post",
+
+        text: "made a new post"
+
       });
 
     }
 
     const populatedPost = await Post.findById(newPost._id)
+
       .populate(
         "author",
         "firstName lastName profileImage headline"
@@ -52,20 +60,24 @@ export const createPost = async (req, res) => {
 
     return res.status(201).json(populatedPost);
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
-      message: "Create Post error",
+      message: "Create post error"
     });
 
   }
+
 };
 
 
 // GET POSTS
 export const getPost = async (req, res) => {
+
   try {
 
     let posts = await Post.find()
@@ -84,20 +96,24 @@ export const getPost = async (req, res) => {
 
     return res.status(200).json(posts);
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
-      message: "Get posts error",
+      message: "Get posts error"
     });
 
   }
+
 };
 
 
 // TOGGLE LIKE
 export const toggleLike = async (req, res) => {
+
   try {
 
     const { postId } = req.params;
@@ -109,45 +125,74 @@ export const toggleLike = async (req, res) => {
     if (!post) {
 
       return res.status(404).json({
-        message: "Post not found",
+        message: "Post not found"
       });
 
     }
 
     const isLiked = post.like.includes(userId);
 
+    // UNLIKE
     if (isLiked) {
 
       post.like.pull(userId);
 
-    } else {
+    }
+
+    // LIKE
+    else {
 
       post.like.push(userId);
+
+      // CREATE NOTIFICATION
+      if (post.author.toString() !== userId) {
+
+        await Notification.create({
+
+          sender: userId,
+
+          receiver: post.author,
+
+          text: "liked your post"
+
+        });
+
+      }
 
     }
 
     await post.save();
 
     return res.status(200).json({
-      message: isLiked ? "Post unliked" : "Post liked",
+
+      message: isLiked
+        ? "Post unliked"
+        : "Post liked",
+
       likes: post.like.length,
-      post,
+
+      post
+
     });
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
-      message: "Like error",
+      message: "Like error"
     });
 
   }
+
 };
 
 
 // ADD COMMENT
 export const addComment = async (req, res) => {
+
   try {
 
     const { postId } = req.params;
@@ -157,7 +202,7 @@ export const addComment = async (req, res) => {
     if (!content || content.trim() === "") {
 
       return res.status(400).json({
-        message: "Comment is required",
+        message: "Comment is required"
       });
 
     }
@@ -167,14 +212,17 @@ export const addComment = async (req, res) => {
     if (!post) {
 
       return res.status(404).json({
-        message: "Post not found",
+        message: "Post not found"
       });
 
     }
 
     const newComment = {
+
       content,
-      user: req.userId,
+
+      user: req.userId
+
     };
 
     post.comment.push(newComment);
@@ -185,9 +233,13 @@ export const addComment = async (req, res) => {
     if (post.author.toString() !== req.userId) {
 
       await Notification.create({
+
         sender: req.userId,
+
         receiver: post.author,
-        text: "commented on your post",
+
+        text: "commented on your post"
+
       });
 
     }
@@ -206,20 +258,24 @@ export const addComment = async (req, res) => {
 
     return res.status(201).json(updatedPost);
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
-      message: "Add comment error",
+      message: "Add comment error"
     });
 
   }
+
 };
 
 
 // DELETE COMMENT
 export const deleteComment = async (req, res) => {
+
   try {
 
     const { postId, commentId } = req.params;
@@ -229,7 +285,7 @@ export const deleteComment = async (req, res) => {
     if (!post) {
 
       return res.status(404).json({
-        message: "Post not found",
+        message: "Post not found"
       });
 
     }
@@ -239,7 +295,7 @@ export const deleteComment = async (req, res) => {
     if (!comment) {
 
       return res.status(404).json({
-        message: "Comment not found",
+        message: "Comment not found"
       });
 
     }
@@ -247,7 +303,7 @@ export const deleteComment = async (req, res) => {
     if (comment.user.toString() !== req.userId) {
 
       return res.status(403).json({
-        message: "Unauthorized",
+        message: "Unauthorized"
       });
 
     }
@@ -257,23 +313,27 @@ export const deleteComment = async (req, res) => {
     await post.save();
 
     return res.status(200).json({
-      message: "Comment deleted successfully",
+      message: "Comment deleted successfully"
     });
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
-      message: "Delete comment error",
+      message: "Delete comment error"
     });
 
   }
+
 };
 
 
 // DELETE POST
 export const deletePost = async (req, res) => {
+
   try {
 
     const { postId } = req.params;
@@ -283,7 +343,7 @@ export const deletePost = async (req, res) => {
     if (!post) {
 
       return res.status(404).json({
-        message: "Post not found",
+        message: "Post not found"
       });
 
     }
@@ -291,7 +351,7 @@ export const deletePost = async (req, res) => {
     if (post.author.toString() !== req.userId) {
 
       return res.status(403).json({
-        message: "Unauthorized",
+        message: "Unauthorized"
       });
 
     }
@@ -299,23 +359,27 @@ export const deletePost = async (req, res) => {
     await Post.findByIdAndDelete(postId);
 
     return res.status(200).json({
-      message: "Post deleted successfully",
+      message: "Post deleted successfully"
     });
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
-      message: "Delete post error",
+      message: "Delete post error"
     });
 
   }
+
 };
 
 
 // EDIT POST
 export const editPost = async (req, res) => {
+
   try {
 
     const { postId } = req.params;
@@ -327,7 +391,7 @@ export const editPost = async (req, res) => {
     if (!post) {
 
       return res.status(404).json({
-        message: "Post not found",
+        message: "Post not found"
       });
 
     }
@@ -335,7 +399,7 @@ export const editPost = async (req, res) => {
     if (post.author.toString() !== req.userId) {
 
       return res.status(403).json({
-        message: "Unauthorized",
+        message: "Unauthorized"
       });
 
     }
@@ -358,13 +422,16 @@ export const editPost = async (req, res) => {
 
     return res.status(200).json(updatedPost);
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.log(error);
 
     return res.status(500).json({
-      message: "Edit post error",
+      message: "Edit post error"
     });
 
   }
+
 };
